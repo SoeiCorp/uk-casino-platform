@@ -65,7 +65,7 @@ contract CasinoPlatform is Ownable {
 		return newPost.id;
 	}
 
-	function createMatch(string calldata home, string calldata away) public returns (uint256) {
+	function createMatch(string calldata home, string calldata away) public onlyOwner returns (uint256) {
 		Match storage newMatch = Matches[nMatch];
 
 		newMatch.id = nMatch;
