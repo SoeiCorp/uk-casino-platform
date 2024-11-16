@@ -4,7 +4,7 @@ pragma solidity ^0.8.27;
 import "./ownable.sol";
 
 struct Match {
-	bytes32 id;
+	uint256 id;
 	string home;
 	string away;
 	uint32 homeScore;
@@ -18,8 +18,8 @@ struct Bet {
 }
 
 struct Post {
-	bytes32 id;
-	bytes32 matchId;
+	uint256 id;
+	uint256 matchId;
 	address[] bankers;
 	uint32 homeHandicapScore;
 	uint32 awayHandicapScore;
