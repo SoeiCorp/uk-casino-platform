@@ -16,28 +16,40 @@ describe("casino platform", function() {
         const casinoPlatform = await CasinoPlatform.deploy();
         // const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
     
-        return casinoPlatform
+        return { casinoPlatform, owner }
     }
 
-    it("should create betting post successfully", async function() {
-        const casinoPlatform = await deploy();
+    it("should create match successfully", async function() {
+        const { casinoPlatform } = await deploy();
 
-        const promise = casinoPlatform.createBettingPost(0, 0, 0);
-        expect(promise).not.to.be.reverted;
+        await expect(casinoPlatform.createMatch("liv", "manu")).not.to.be.reverted;
 
-        await promise;
-        
-        expect(await casinoPlatform.nBetting()).to.equals(1);
+        expect(await casinoPlatform.nMatch()).to.equals(1);
     });
 
-    it("should create match successfully", async function() {
-        const casinoPlatform = await deploy();
+    it("should revert create betting post when the matchId is not exist", async function() {
+        const { casinoPlatform, owner } = await deploy();
 
-        const promise = casinoPlatform.createMatch("liv", "manu");
-        expect(promise).not.to.be.reverted;
+        // create post
+        const stakeAmount = 100;
 
-        await promise;
+        await expect(casinoPlatform.createBettingPost(0, 0, 0, {value: stakeAmount})).to.be.revertedWith("matchId not existed");
         
-        expect(await casinoPlatform.nMatch()).to.equals(1);
+        expect(await hre.ethers.provider.getBalance(casinoPlatform.target)).to.equals(0);
+    });
+
+    it("should create betting post successfully when the matchId existed", async function() {
+        const { casinoPlatform, owner } = await deploy();
+
+        // create match
+        await casinoPlatform.createMatch("liv", "manu");
+
+        // create post
+        const stakeAmount = 100;
+
+        await expect(casinoPlatform.createBettingPost(0, 0, 0, {value: stakeAmount})).not.to.be.reverted;
+        
+        expect(await casinoPlatform.nBetting()).to.equals(1);
+        expect(await casinoPlatform.getStakeInPostByUserAddress(0, owner.address)).to.equals(stakeAmount);
     });
 });
