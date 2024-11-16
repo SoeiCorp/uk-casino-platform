@@ -30,12 +30,28 @@ struct Post {
 }
 
 contract CasinoPlatform is Ownable {
+	uint256 public nBetting;
+
     Match[] Matches;
-    Post[] BettingPosts;
+    mapping(uint256 => Post) BettingPosts;
 
     constructor() {
-
+		nBetting = 0;
     }
 
-    
+    function createBettingPost(uint256 matchId, uint32 homeHandicapScore, uint32 awayHandicapScore) public payable returns (uint256) {
+		Post storage newPost = BettingPosts[nBetting];
+
+		nBetting += 1;
+
+		newPost.id = nBetting;
+		newPost.matchId = matchId;
+		newPost.bankers.push(msg.sender);
+		newPost.homeHandicapScore = homeHandicapScore;
+		newPost.awayHandicapScore = awayHandicapScore;
+		newPost.bankerStake[msg.sender] = msg.value;
+		newPost.totalStake = msg.value;
+
+		return newPost.id;
+	}
 }
