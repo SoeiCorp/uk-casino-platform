@@ -22,8 +22,22 @@ describe("casino platform", function() {
     it("should create betting post successfully", async function() {
         const casinoPlatform = await deploy();
 
-        expect(casinoPlatform.createBettingPost(0, 0, 0)).not.to.be.reverted;
+        const promise = casinoPlatform.createBettingPost(0, 0, 0);
+        expect(promise).not.to.be.reverted;
 
-        expect(casinoPlatform.nBetting).to.equals(1);
-    })
+        await promise;
+        
+        expect(await casinoPlatform.nBetting()).to.equals(1);
+    });
+
+    it("should create match successfully", async function() {
+        const casinoPlatform = await deploy();
+
+        const promise = casinoPlatform.createMatch("liv", "manu");
+        expect(promise).not.to.be.reverted;
+
+        await promise;
+        
+        expect(await casinoPlatform.nMatch()).to.equals(1);
+    });
 });
