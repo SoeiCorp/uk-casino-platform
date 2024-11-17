@@ -114,17 +114,15 @@ contract CasinoPlatform is Ownable {
 	}
 
 	function createMatch(string calldata home, string calldata away) public onlyOwner returns (uint256) {
-		Match storage newMatch = Matches[nMatch];
-
-		newMatch.id = nMatch;
+		Matches[nMatch].id = nMatch;
 		nMatch += 1;
 
-		newMatch.home = home;
-		newMatch.away = away;
-		newMatch.isFinished = false;
-		newMatch.isInitialized = true;
+		Matches[nMatch].home = home;
+		Matches[nMatch].away = away;
+		Matches[nMatch].isFinished = false;
+		Matches[nMatch].isInitialized = true;
 
-		return newMatch.id;
+		return Matches[nMatch].id;
 	}
 
 	function makeABet(uint256 postId, bool isHomeBet) public payable returns (bool) {
