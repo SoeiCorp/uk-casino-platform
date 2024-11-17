@@ -113,6 +113,14 @@ contract CasinoPlatform is Ownable {
 		return newPost.id;
 	}
 
+	function contributeToBettingPost(uint256 postId) public payable returns (bool success) {
+		BettingPosts[postId].bankerStake[msg.sender] += msg.value;
+
+		success = true;
+
+		return success;
+	}
+
 	function createMatch(string calldata home, string calldata away) public onlyOwner returns (uint256) {
 		Matches[nMatch].id = nMatch;
 		nMatch += 1;
