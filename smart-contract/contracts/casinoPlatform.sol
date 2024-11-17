@@ -17,6 +17,7 @@ struct Match {
 struct Bet {
 	uint256 homeBet;
 	uint256 awayBet;
+	bool isClaimed;
 }
 
 struct Post {
@@ -52,6 +53,38 @@ contract CasinoPlatform is Ownable {
 		Matches[matchId].homeScore = homeScore;
 		Matches[matchId].awayScore = awayScore;
 		Matches[matchId].isFinished = true;
+
+		return true;
+	}
+
+	function claimBettingReward(uint256 postId) public returns (bool) {
+		Post storage thePost = BettingPosts[postId];
+		Match storage theMatch = Matches[thePost.matchId];
+		
+		require(thePost.isInitialized, "betting post not found");
+		require(theMatch.isFinished, "match is not finished");
+		require(!thePost.playerBet[msg.sender].isClaimed, "reward already claimed");
+
+		thePost.playerBet[msg.sender].isClaimed = true;
+
+		uint32 homeScoreWithHandicap = theMatch.homeScore + thePost.homeHandicapScore;
+		uint32 awayScoreWithHandicap = theMatch.awayScore + thePost.awayHandicapScore;
+
+		if (homeScoreWithHandicap > awayScoreWithHandicap) {
+			uint256 balanceToSend = thePost.playerBet[msg.sender].homeBet * 2;
+			_transfer(msg.sender, balanceToSend);
+
+			return true;
+		} else if (homeScoreWithHandicap < awayScoreWithHandicap) {
+			uint256 balanceToSend = thePost.playerBet[msg.sender].awayBet * 2;
+			_transfer(msg.sender, balanceToSend);
+
+			return true;
+		}
+
+		// send back ether for all bets because there's no winner
+		_transfer(msg.sender, thePost.playerBet[msg.sender].homeBet);
+		_transfer(msg.sender, thePost.playerBet[msg.sender].awayBet);
 
 		return true;
 	}
@@ -108,6 +141,8 @@ contract CasinoPlatform is Ownable {
 
 			BettingPosts[postId].totalBet.awayBet += msg.value;
 		}
+
+		BettingPosts[postId].playerBet[msg.sender].isClaimed = false;
 
 		return true;
 	}
