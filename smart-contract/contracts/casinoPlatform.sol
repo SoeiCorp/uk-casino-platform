@@ -43,6 +43,7 @@ contract CasinoPlatform is Ownable {
 
     constructor() {
 		nBetting = 0;
+		nMatch = 0;
     }
 	
 
