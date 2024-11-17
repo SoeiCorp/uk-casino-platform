@@ -151,4 +151,11 @@ contract CasinoPlatform is Ownable {
 
 		return true;
 	}
+
+	function _transfer(address to, uint256 amount) internal {
+        (bool success, ) = to.call{value: amount}(new bytes(0));
+        if (!success) {
+            revert("transfer error");
+        }
+    }
 }
