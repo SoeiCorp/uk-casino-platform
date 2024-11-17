@@ -65,8 +65,8 @@ contract CasinoPlatform is Ownable {
 	}
 
     function createBettingPost(uint256 matchId, uint32 homeHandicapScore, uint32 awayHandicapScore) public payable returns (uint256) {
-		bool matchExisted = Matches[matchId].isInitialized;
-		require(matchExisted, "matchId not existed");
+		require(Matches[matchId].isInitialized, "matchId not existed");
+		require(!Matches[matchId].isFinished, "the match is alreay finished");
 
 		Post storage newPost = BettingPosts[nBetting];
 
