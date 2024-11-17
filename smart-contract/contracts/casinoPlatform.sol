@@ -114,6 +114,8 @@ contract CasinoPlatform is Ownable {
 	}
 
 	function contributeToBettingPost(uint256 postId) public payable returns (bool success) {
+		require(!Matches[BettingPosts[postId].matchId].isFinished, "match already finished");
+
 		BettingPosts[postId].bankerStake[msg.sender] += msg.value;
 		BettingPosts[postId].totalStake += msg.value;
 
