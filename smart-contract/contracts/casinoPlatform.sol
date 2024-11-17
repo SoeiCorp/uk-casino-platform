@@ -93,22 +93,19 @@ contract CasinoPlatform is Ownable {
 	}
 
 	function makeABet(uint256 postId, bool isHomeBet) public payable returns (bool) {
-		Post storage bettingPost = BettingPosts[postId];
-
-		bool postExisted = bettingPost.isInitialized;
-		require(postExisted, "post not exist");
-		require(isValidBet(bettingPost, isHomeBet, msg.value), "bet not valid");
+		require(BettingPosts[postId].isInitialized, "post not exist");
+		require(isValidBet(BettingPosts[postId], isHomeBet, msg.value), "bet not valid");
 
 		if (isHomeBet) {
-			bettingPost.playerBet[msg.sender].homeBet = msg.value;
-			bettingPost.playerBet[msg.sender].awayBet = 0;
+			BettingPosts[postId].playerBet[msg.sender].homeBet = msg.value;
+			BettingPosts[postId].playerBet[msg.sender].awayBet = 0;
 
-			bettingPost.totalBet.homeBet += msg.value;
+			BettingPosts[postId].totalBet.homeBet += msg.value;
 		} else {
-			bettingPost.playerBet[msg.sender].awayBet = msg.value;
-			bettingPost.playerBet[msg.sender].homeBet = 0;
+			BettingPosts[postId].playerBet[msg.sender].awayBet = msg.value;
+			BettingPosts[postId].playerBet[msg.sender].homeBet = 0;
 
-			bettingPost.totalBet.awayBet += msg.value;
+			BettingPosts[postId].totalBet.awayBet += msg.value;
 		}
 
 		return true;
