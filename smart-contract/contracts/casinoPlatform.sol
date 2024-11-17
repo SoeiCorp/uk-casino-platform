@@ -11,6 +11,7 @@ struct Match {
 	uint32 awayScore;
 	bool isFinished;
 	bool isInitialized;
+	uint256[] bettingPostIds;
 }
 
 struct Bet {
@@ -41,14 +42,30 @@ contract CasinoPlatform is Ownable {
     constructor() {
 		nBetting = 0;
     }
+	
 
 	function getStakeInPostByUserAddress(uint256 postId, address user) public view returns (uint256) {
 		return BettingPosts[postId].bankerStake[user];
 	}
 
+	function finishMatch(uint256 matchId, uint32 homeScore, uint32 awayScore) public onlyOwner returns (bool) {
+		Matches[matchId].homeScore = homeScore;
+		Matches[matchId].awayScore = awayScore;
+		Matches[matchId].isFinished = true;
+
+		for (uint256 i=0; i < Matches[matchId].bettingPostIds.length; i++) {
+			resolveBettingPost(Matches[matchId].bettingPostIds[i]);
+		}
+
+		return true;
+	}
+
+	function resolveBettingPost(uint256 postId) private returns (bool) {
+		return false;
+	}
+
     function createBettingPost(uint256 matchId, uint32 homeHandicapScore, uint32 awayHandicapScore) public payable returns (uint256) {
 		bool matchExisted = Matches[matchId].isInitialized;
-		
 		require(matchExisted, "matchId not existed");
 
 		Post storage newPost = BettingPosts[nBetting];
@@ -64,6 +81,8 @@ contract CasinoPlatform is Ownable {
 		newPost.totalStake = msg.value;
 		newPost.isInitialized = true;
 
+		Matches[matchId].bettingPostIds.push(newPost.id);
+
 		return newPost.id;
 	}
 
@@ -75,6 +94,7 @@ contract CasinoPlatform is Ownable {
 
 		newMatch.home = home;
 		newMatch.away = away;
+		newMatch.isFinished = false;
 		newMatch.isInitialized = true;
 
 		return newMatch.id;
