@@ -53,15 +53,7 @@ contract CasinoPlatform is Ownable {
 		Matches[matchId].awayScore = awayScore;
 		Matches[matchId].isFinished = true;
 
-		for (uint256 i=0; i < Matches[matchId].bettingPostIds.length; i++) {
-			resolveBettingPost(Matches[matchId].bettingPostIds[i]);
-		}
-
 		return true;
-	}
-
-	function resolveBettingPost(uint256 postId) private returns (bool) {
-		return false;
 	}
 
     function createBettingPost(uint256 matchId, uint32 homeHandicapScore, uint32 awayHandicapScore) public payable returns (uint256) {
