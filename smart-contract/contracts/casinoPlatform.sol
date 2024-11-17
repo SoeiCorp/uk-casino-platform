@@ -18,6 +18,7 @@ struct Bet {
 	uint256 homeBet;
 	uint256 awayBet;
 	bool isClaimed;
+	bool isInitialized;
 }
 
 struct Post {
@@ -105,6 +106,7 @@ contract CasinoPlatform is Ownable {
 		newPost.bankerStake[msg.sender] = msg.value;
 		newPost.totalStake = msg.value;
 		newPost.isInitialized = true;
+		newPost.totalBet.isInitialized = true;
 
 		Matches[matchId].bettingPostIds.push(newPost.id);
 
@@ -143,6 +145,7 @@ contract CasinoPlatform is Ownable {
 		}
 
 		BettingPosts[postId].playerBet[msg.sender].isClaimed = false;
+		BettingPosts[postId].playerBet[msg.sender].isInitialized = true;
 
 		return true;
 	}
