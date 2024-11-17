@@ -95,6 +95,7 @@ contract CasinoPlatform is Ownable {
 	function makeABet(uint256 postId, bool isHomeBet) public payable returns (bool) {
 		require(BettingPosts[postId].isInitialized, "post not exist");
 		require(isValidBet(BettingPosts[postId], isHomeBet, msg.value), "bet not valid");
+		require(!Matches[BettingPosts[postId].matchId].isFinished, "match already finished");
 
 		if (isHomeBet) {
 			BettingPosts[postId].playerBet[msg.sender].homeBet = msg.value;
