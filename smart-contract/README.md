@@ -1,3 +1,12 @@
+# FAQ
+
+Q1: Why we use map instead of array for storing match and post?
+A1: Because struct with map cant be store in array
+
+Q2: Why the casino is ownable and only owner can create and finish matches?
+A2: Because we are currently not connecting to chainlink. We're planned to use chainlink (highly secure and trusted link between off-chain and on-chain data) for matches information.
+
+
 # Sample Hardhat Project
 
 This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
