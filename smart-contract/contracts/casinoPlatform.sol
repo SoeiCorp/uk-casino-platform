@@ -75,112 +75,19 @@ contract CasinoPlatform is Ownable {
 	function getPostsIBetInWithPagination(uint256 nData, uint256 pageNumber) public view returns (PostView[] memory posts, bool success, bool haveMorePageAvailable) {
 		uint256[] storage postIds = PlayerBettingPostIds[msg.sender];
 
-		uint256 startIndex;
-		uint256 endIndex;
-
-		(startIndex, endIndex, success, haveMorePageAvailable) = _getPaginationStartEndIndex(postIds.length, nData, pageNumber);
-
-		if (!success) {
-			return (posts, success, haveMorePageAvailable);
-		}
-
-		uint256 nDataToReturn = startIndex - endIndex + 1;
-		posts = new PostView[](nDataToReturn);
-
-		for (uint256 i = startIndex; i >= endIndex; i--) {
-			uint256 j = startIndex - i;
-
-			posts[j].id = BettingPosts[postIds[i]].id;
-			posts[j].matchId = BettingPosts[postIds[i]].matchId;
-			posts[j].homeHandicapScore = BettingPosts[postIds[i]].homeHandicapScore;
-			posts[j].awayHandicapScore = BettingPosts[postIds[i]].awayHandicapScore;
-			posts[j].totalStake = BettingPosts[postIds[i]].totalStake;
-			posts[j].totalBet = BettingPosts[postIds[i]].totalBet;
-			posts[j].isInitialized = BettingPosts[postIds[i]].isInitialized;
-			posts[j].isFinished = Matches[BettingPosts[postIds[i]].matchId].isFinished;
-			posts[j].isAlreadyMadeABet = BettingPosts[postIds[i]].playerBet[msg.sender].isInitialized;
-			posts[j].myStake = BettingPosts[postIds[i]].bankerStake[msg.sender];
-			posts[j].myBet.homeBet = BettingPosts[postIds[i]].playerBet[msg.sender].homeBet;
-			posts[j].myBet.awayBet = BettingPosts[postIds[i]].playerBet[msg.sender].awayBet;
-		}
-
-		success = true;
-
-		return (posts, success, haveMorePageAvailable);
+		return _getPostsByIdsWithPagination(postIds, nData, pageNumber);
 	}
 
 	function getMyBettingPostsAsBankerWithPagination(uint256 nData, uint256 pageNumber) public view returns (PostView[] memory posts, bool success, bool haveMorePageAvailable) {
 		uint256[] storage postIds = BankerBettingPostIds[msg.sender];
 
-		uint256 startIndex;
-		uint256 endIndex;
-
-		(startIndex, endIndex, success, haveMorePageAvailable) = _getPaginationStartEndIndex(postIds.length, nData, pageNumber);
-
-		if (!success) {
-			return (posts, success, haveMorePageAvailable);
-		}
-
-		uint256 nDataToReturn = startIndex - endIndex + 1;
-		posts = new PostView[](nDataToReturn);
-
-		for (uint256 i = startIndex; i >= endIndex; i--) {
-			uint256 j = startIndex - i;
-
-			posts[j].id = BettingPosts[postIds[i]].id;
-			posts[j].matchId = BettingPosts[postIds[i]].matchId;
-			posts[j].homeHandicapScore = BettingPosts[postIds[i]].homeHandicapScore;
-			posts[j].awayHandicapScore = BettingPosts[postIds[i]].awayHandicapScore;
-			posts[j].totalStake = BettingPosts[postIds[i]].totalStake;
-			posts[j].totalBet = BettingPosts[postIds[i]].totalBet;
-			posts[j].isInitialized = BettingPosts[postIds[i]].isInitialized;
-			posts[j].isFinished = Matches[BettingPosts[postIds[i]].matchId].isFinished;
-			posts[j].isAlreadyMadeABet = BettingPosts[postIds[i]].playerBet[msg.sender].isInitialized;
-			posts[j].myStake = BettingPosts[postIds[i]].bankerStake[msg.sender];
-			posts[j].myBet.homeBet = BettingPosts[postIds[i]].playerBet[msg.sender].homeBet;
-			posts[j].myBet.awayBet = BettingPosts[postIds[i]].playerBet[msg.sender].awayBet;
-		}
-
-		success = true;
-
-		return (posts, success, haveMorePageAvailable);
+		return _getPostsByIdsWithPagination(postIds, nData, pageNumber);
 	}
 
 	function getPostsByMatchIdSortByLatestWithPagination(uint256 matchId, uint256 nData, uint256 pageNumber) public view returns (PostView[] memory posts, bool success, bool haveMorePageAvailable) {
 		uint256[] storage postIds = Matches[matchId].bettingPostIds;
 
-		uint256 startIndex;
-		uint256 endIndex;
-
-		(startIndex, endIndex, success, haveMorePageAvailable) = _getPaginationStartEndIndex(postIds.length, nData, pageNumber);
-
-		if (!success) {
-			return (posts, success, haveMorePageAvailable);
-		}
-
-		uint256 nDataToReturn = startIndex - endIndex + 1;
-		posts = new PostView[](nDataToReturn);
-
-		for (uint256 i = startIndex; i >= endIndex; i--) {
-			uint256 j = startIndex - i;
-
-			posts[j].id = BettingPosts[postIds[i]].id;
-			posts[j].matchId = BettingPosts[postIds[i]].matchId;
-			posts[j].homeHandicapScore = BettingPosts[postIds[i]].homeHandicapScore;
-			posts[j].awayHandicapScore = BettingPosts[postIds[i]].awayHandicapScore;
-			posts[j].totalStake = BettingPosts[postIds[i]].totalStake;
-			posts[j].totalBet = BettingPosts[postIds[i]].totalBet;
-			posts[j].isInitialized = BettingPosts[postIds[i]].isInitialized;
-			posts[j].isFinished = Matches[BettingPosts[postIds[i]].matchId].isFinished;
-			posts[j].isAlreadyMadeABet = BettingPosts[postIds[i]].playerBet[msg.sender].isInitialized;
-			posts[j].myStake = BettingPosts[postIds[i]].bankerStake[msg.sender];
-			posts[j].myBet.homeBet = BettingPosts[postIds[i]].playerBet[msg.sender].homeBet;
-			posts[j].myBet.awayBet = BettingPosts[postIds[i]].playerBet[msg.sender].awayBet;
-		}
-
-		success = true;
-
-		return (posts, success, haveMorePageAvailable);
+		return _getPostsByIdsWithPagination(postIds, nData, pageNumber);
 	}
 	
 	function getActiveMatchSortByLatestWithPagination(uint256 nData, uint256 pageNumber) public view returns (MatchView[] memory activeMatches, bool success, bool haveMorePageAvailable) {
@@ -395,5 +302,40 @@ contract CasinoPlatform is Ownable {
 		haveMorePageAvailable = endIndex > 0;
 
 		return (startIndex, endIndex, success, haveMorePageAvailable);
+	}
+
+	function _getPostsByIdsWithPagination(uint256[] memory postIds, uint256 nData, uint256 pageNumber) internal view returns (PostView[] memory posts, bool success, bool haveMorePageAvailable) {
+		uint256 startIndex;
+		uint256 endIndex;
+
+		(startIndex, endIndex, success, haveMorePageAvailable) = _getPaginationStartEndIndex(postIds.length, nData, pageNumber);
+
+		if (!success) {
+			return (posts, success, haveMorePageAvailable);
+		}
+
+		uint256 nDataToReturn = startIndex - endIndex + 1;
+		posts = new PostView[](nDataToReturn);
+
+		for (uint256 i = startIndex; i >= endIndex; i--) {
+			uint256 j = startIndex - i;
+
+			posts[j].id = BettingPosts[postIds[i]].id;
+			posts[j].matchId = BettingPosts[postIds[i]].matchId;
+			posts[j].homeHandicapScore = BettingPosts[postIds[i]].homeHandicapScore;
+			posts[j].awayHandicapScore = BettingPosts[postIds[i]].awayHandicapScore;
+			posts[j].totalStake = BettingPosts[postIds[i]].totalStake;
+			posts[j].totalBet = BettingPosts[postIds[i]].totalBet;
+			posts[j].isInitialized = BettingPosts[postIds[i]].isInitialized;
+			posts[j].isFinished = Matches[BettingPosts[postIds[i]].matchId].isFinished;
+			posts[j].isAlreadyMadeABet = BettingPosts[postIds[i]].playerBet[msg.sender].isInitialized;
+			posts[j].myStake = BettingPosts[postIds[i]].bankerStake[msg.sender];
+			posts[j].myBet.homeBet = BettingPosts[postIds[i]].playerBet[msg.sender].homeBet;
+			posts[j].myBet.awayBet = BettingPosts[postIds[i]].playerBet[msg.sender].awayBet;
+		}
+
+		success = true;
+
+		return (posts, success, haveMorePageAvailable);
 	}
 }
