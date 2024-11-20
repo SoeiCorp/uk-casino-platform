@@ -115,6 +115,10 @@ contract CasinoPlatform is Ownable {
 			activeMatches[j].isFinished = Matches[i].isFinished;
 			activeMatches[j].isInitialized = Matches[i].isInitialized;
 			activeMatches[j].nPosts = Matches[i].bettingPostIds.length;
+
+			if (i == 0) {
+				break;
+			}
 		}
 
 		success = true;
@@ -301,6 +305,8 @@ contract CasinoPlatform is Ownable {
 
 		haveMorePageAvailable = endIndex > 0;
 
+		success = true;
+
 		return (startIndex, endIndex, success, haveMorePageAvailable);
 	}
 
@@ -332,6 +338,10 @@ contract CasinoPlatform is Ownable {
 			posts[j].myStake = BettingPosts[postIds[i]].bankerStake[msg.sender];
 			posts[j].myBet.homeBet = BettingPosts[postIds[i]].playerBet[msg.sender].homeBet;
 			posts[j].myBet.awayBet = BettingPosts[postIds[i]].playerBet[msg.sender].awayBet;
+
+			if (i == 0) {
+				break;
+			}
 		}
 
 		success = true;
