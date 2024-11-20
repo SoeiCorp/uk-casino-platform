@@ -33,6 +33,16 @@ struct Post {
 	bool isInitialized;
 }
 
+struct PostView {
+	uint256 id;
+	uint256 matchId;
+	uint32 homeHandicapScore;
+	uint32 awayHandicapScore;
+	uint256 totalStake;
+	Bet totalBet;
+	bool isInitialized;	
+}
+
 contract CasinoPlatform is Ownable {
 	uint256 public nBetting;
 	uint256 public nMatch;
@@ -44,32 +54,52 @@ contract CasinoPlatform is Ownable {
 		nBetting = 0;
 		nMatch = 0;
     }
+
+	function getPostsByMatchIdWithPagination(uint256 matchId, uint256 nData, uint256 pageNumber) public view returns (PostView[] memory posts, bool success, bool haveMorePageAvailable) {
+		uint256[] storage postIds = Matches[matchId].bettingPostIds;
+
+		uint256 startIndex;
+		uint256 endIndex;
+
+		(startIndex, endIndex, success, haveMorePageAvailable) = _getPaginationStartEndIndex(postIds.length, nData, pageNumber);
+
+		if (!success) {
+			return (posts, success, haveMorePageAvailable);
+		}
+
+		uint256 nDataToReturn = startIndex - endIndex + 1;
+		posts = new PostView[](nDataToReturn);
+
+		for (uint256 i = startIndex; i >= endIndex; i--) {
+			uint256 j = startIndex - i;
+
+			posts[j].id = BettingPosts[postIds[i]].id;
+			posts[j].matchId = BettingPosts[postIds[i]].matchId;
+			posts[j].homeHandicapScore = BettingPosts[postIds[i]].homeHandicapScore;
+			posts[j].awayHandicapScore = BettingPosts[postIds[i]].awayHandicapScore;
+			posts[j].totalStake = BettingPosts[postIds[i]].totalStake;
+			posts[j].totalBet = BettingPosts[postIds[i]].totalBet;
+			posts[j].isInitialized = BettingPosts[postIds[i]].isInitialized;
+		}
+
+		success = true;
+
+		return (posts, success, haveMorePageAvailable);
+	}
 	
 	function getActiveMatchSortByLatest(uint256 nData, uint256 pageNumber) public view returns (Match[] memory activeMatches, bool success, bool haveMorePageAvailable) {
 		uint256 startIndex;
 		uint256 endIndex;
-		// pageNumber start with 0
-		// startIndex = nMatch - (pageNumber * nData) - 1
-		// endIndex = startIndex + 1 - nData
 
-		bool startIndexWillBeLowerThanZero = pageNumber * nData + 1 > nMatch;
-		if (startIndexWillBeLowerThanZero) {
-			success = false;
-			haveMorePageAvailable = false;
+		(startIndex, endIndex, success, haveMorePageAvailable) = _getPaginationStartEndIndex(nMatch, nData, pageNumber);
+
+		if (!success) {
 			return (activeMatches, success, haveMorePageAvailable);
 		}
-
-		startIndex = nMatch - (pageNumber * nData) - 1;
-
-		bool dataAvailableOnThisPageisLessThanNData = nData > startIndex + 1;
-		if (dataAvailableOnThisPageisLessThanNData) {
-			endIndex = 0;
-		} else {
-			endIndex = startIndex + 1 - nData;
-		}
-
+		
 		uint256 nDataToReturn = startIndex - endIndex + 1;
 		activeMatches = new Match[](nDataToReturn);
+
 
 		for (uint256 i = startIndex; i >= endIndex; i--) {
 			uint256 j = startIndex - i;
@@ -231,4 +261,30 @@ contract CasinoPlatform is Ownable {
             revert("transfer error");
         }
     }
+
+	function _getPaginationStartEndIndex(uint256 nAllData, uint nDataWant, uint256 pageNumber) internal pure returns (uint256 startIndex, uint256 endIndex, bool success, bool haveMorePageAvailable) {
+		// pageNumber start with 0
+		// startIndex = nMatch - (pageNumber * nData) - 1
+		// endIndex = startIndex + 1 - nData
+
+		bool startIndexWillBeLowerThanZero = pageNumber * nDataWant + 1 > nAllData;
+		if (startIndexWillBeLowerThanZero) {
+			success = false;
+			haveMorePageAvailable = false;
+			return (startIndex, endIndex, success, haveMorePageAvailable);
+		}
+
+		startIndex = nAllData - (pageNumber * nDataWant) - 1;
+
+		bool dataAvailableOnThisPageisLessThanNData = nDataWant > startIndex + 1;
+		if (dataAvailableOnThisPageisLessThanNData) {
+			endIndex = 0;
+		} else {
+			endIndex = startIndex + 1 - nDataWant;
+		}
+
+		haveMorePageAvailable = endIndex > 0;
+
+		return (startIndex, endIndex, success, haveMorePageAvailable);
+	}
 }
