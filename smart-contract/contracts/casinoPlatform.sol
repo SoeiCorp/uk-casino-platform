@@ -69,7 +69,7 @@ contract CasinoPlatform is Ownable {
 		nMatch = 0;
     }
 
-	function getPostsByMatchIdWithPagination(uint256 matchId, uint256 nData, uint256 pageNumber) public view returns (PostView[] memory posts, bool success, bool haveMorePageAvailable) {
+	function getPostsByMatchIdSortByLatestWithPagination(uint256 matchId, uint256 nData, uint256 pageNumber) public view returns (PostView[] memory posts, bool success, bool haveMorePageAvailable) {
 		uint256[] storage postIds = Matches[matchId].bettingPostIds;
 
 		uint256 startIndex;
@@ -102,7 +102,7 @@ contract CasinoPlatform is Ownable {
 		return (posts, success, haveMorePageAvailable);
 	}
 	
-	function getActiveMatchSortByLatest(uint256 nData, uint256 pageNumber) public view returns (MatchView[] memory activeMatches, bool success, bool haveMorePageAvailable) {
+	function getActiveMatchSortByLatestWithPagination(uint256 nData, uint256 pageNumber) public view returns (MatchView[] memory activeMatches, bool success, bool haveMorePageAvailable) {
 		uint256 startIndex;
 		uint256 endIndex;
 
