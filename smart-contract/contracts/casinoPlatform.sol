@@ -12,6 +12,7 @@ struct Match {
 	bool isFinished;
 	bool isInitialized;
 	uint256[] bettingPostIds;
+	uint256 timeLimit;
 }
 
 struct Bet {
@@ -57,6 +58,8 @@ struct MatchView {
 	bool isInitialized;
 	uint256 nPosts;
 }
+
+uint256 constant MATCH_TIME_LIMIT = 60 * 60 * 24 * 10; // unit is in seconds and this is equal to 10 days
 
 contract CasinoPlatform is Ownable {
 	uint256 public nBetting;
@@ -144,8 +147,19 @@ contract CasinoPlatform is Ownable {
 		Match storage theMatch = Matches[thePost.matchId];
 		
 		require(thePost.isInitialized, "betting post not found");
-		require(theMatch.isFinished, "match is not finished");
 		require(!thePost.playerBet[msg.sender].isClaimed, "reward already claimed");
+
+		// allow players to pull out money when the chainlink is not updating
+		if (theMatch.timeLimit <= block.timestamp) {
+			BettingPosts[postId].playerBet[msg.sender].isClaimed = true;
+
+			uint256 balanceToSend = thePost.playerBet[msg.sender].homeBet + thePost.playerBet[msg.sender].awayBet;
+			_transfer(msg.sender, balanceToSend);
+
+			return true;
+		}
+
+		require(theMatch.isFinished, "match is not finished");
 
 		thePost.playerBet[msg.sender].isClaimed = true;
 
@@ -213,6 +227,8 @@ contract CasinoPlatform is Ownable {
 		Matches[nMatch].away = away;
 		Matches[nMatch].isFinished = false;
 		Matches[nMatch].isInitialized = true;
+
+		Matches[nMatch].timeLimit = block.timestamp + MATCH_TIME_LIMIT;
 
 		nMatch += 1;
 
