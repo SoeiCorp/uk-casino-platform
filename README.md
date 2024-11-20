@@ -104,12 +104,12 @@ Make sure you have enough funds in your Metamask wallet.
 
 We use React as our frontend framework because of the team's familiarity with it.
 
-There are several folders/files that are important:
+In the folder `/client`, there are several folders/files that are important:
 
-`.env` file
-`Dockerfile` and `docker-compose.yml` file, which are used to run a container
-`/public`, which contains resources (e.g., images)
-`/src`, which contains all frontend code
+1. `.env` file
+2. `Dockerfile` and `docker-compose.yml` file, which are used to run a container
+3. `/public`, which contains resources (e.g., images)
+4. `/src`, which contains all frontend code
 
 To run our frontend, there are two methods:
 ### Method 1: Using Docker
