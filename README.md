@@ -17,14 +17,19 @@ We need to prove that the zero-trust online casino platform in the UK is achieva
 
 Can a traditional database technology meet our needs?
 - No, because we need a smart contract to prevent fraud and deception.
+
 Does more than one participant need to be able to update the data?
 - Yes, because bankers and players should make a deal or accept it based on their preferences.
+
 Do we and all those updaters trust one another?
 - No, because it is gambling. The bankers and players might not trust whether the other side will pay.
+
 Would all the participants trust a third party?
 - No, because a third party might deceive everyone, we need to implement a zero-trust platform for gambling.
+
 Does the data need to be kept private?
 - No, because it does not contain any personal information, and it should be shown for transparency.
+
 Do we need to control who can make changes to the blockchain software?
 - No, there's no need to make any change to the blockchain software. Any blockchain-supporting smart contracts can be used such as Ethereum.
 
@@ -118,7 +123,9 @@ docker-compose up --build
 ```
 
 ### Method 2: Using npm
-
+``` bash
+cd client
+```
 ```bash
 npm run build
 ```
