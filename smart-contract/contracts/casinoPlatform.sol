@@ -40,7 +40,8 @@ struct PostView {
 	uint32 awayHandicapScore;
 	uint256 totalStake;
 	Bet totalBet;
-	bool isInitialized;	
+	bool isInitialized;
+	bool isAlreadyMadeABet;
 }
 
 contract CasinoPlatform is Ownable {
@@ -82,6 +83,7 @@ contract CasinoPlatform is Ownable {
 			posts[j].totalStake = BettingPosts[postIds[i]].totalStake;
 			posts[j].totalBet = BettingPosts[postIds[i]].totalBet;
 			posts[j].isInitialized = BettingPosts[postIds[i]].isInitialized;
+			posts[j].isAlreadyMadeABet = BettingPosts[postIds[i]].playerBet[msg.sender].isInitialized;
 		}
 
 		success = true;
