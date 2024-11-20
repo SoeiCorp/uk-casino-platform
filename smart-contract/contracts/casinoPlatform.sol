@@ -45,6 +45,43 @@ contract CasinoPlatform is Ownable {
 		nMatch = 0;
     }
 	
+	function getActiveMatchSortByLatest(uint256 nData, uint256 pageNumber) public view returns (Match[] memory activeMatches, bool success, bool haveMorePageAvailable) {
+		uint256 startIndex;
+		uint256 endIndex;
+		// pageNumber start with 0
+		// startIndex = nMatch - (pageNumber * nData) - 1
+		// endIndex = startIndex + 1 - nData
+
+		bool startIndexWillBeLowerThanZero = pageNumber * nData + 1 > nMatch;
+		if (startIndexWillBeLowerThanZero) {
+			success = false;
+			haveMorePageAvailable = false;
+			return (activeMatches, success, haveMorePageAvailable);
+		}
+
+		startIndex = nMatch - (pageNumber * nData) - 1;
+
+		bool dataAvailableOnThisPageisLessThanNData = nData > startIndex + 1;
+		if (dataAvailableOnThisPageisLessThanNData) {
+			endIndex = 0;
+		} else {
+			endIndex = startIndex + 1 - nData;
+		}
+
+		uint256 nDataToReturn = startIndex - endIndex + 1;
+		activeMatches = new Match[](nDataToReturn);
+
+		for (uint256 i = startIndex; i >= endIndex; i--) {
+			uint256 j = startIndex - i;
+
+			activeMatches[j] = Matches[i];
+		}
+
+		success = true;
+		haveMorePageAvailable = endIndex > 0;
+
+		return (activeMatches, success, haveMorePageAvailable);
+	}
 
 	function getStakeInPostByUserAddress(uint256 postId, address user) public view returns (uint256) {
 		return BettingPosts[postId].bankerStake[user];
