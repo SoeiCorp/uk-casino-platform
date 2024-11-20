@@ -58,7 +58,7 @@ contract CasinoPlatform is Ownable {
 		return true;
 	}
 
-	function claimBettingReward(uint256 postId) public returns (bool) {
+	function playerClaimBettingReward(uint256 postId) public returns (bool) {
 		Post storage thePost = BettingPosts[postId];
 		Match storage theMatch = Matches[thePost.matchId];
 		
