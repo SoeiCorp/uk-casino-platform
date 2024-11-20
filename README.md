@@ -3,15 +3,18 @@
 This is the UK Web3 casino platform PoC, a part of the blockchain class final project.
 
 ## Problem
+
 United Kingdom casinos are legal, however, gambling is inherently built on trust. Do you trust the person you make a bet with? Key issues include:
 1. Lack of Trust: In typical gambling platforms, both parties (players and bankers) must rely on the operator or a centralized entity to handle bets and payouts fairly. However, the history of online gambling is rife with examples of manipulation and opaque processes.
 2. Fraud & Manipulation: There’s always a risk that one party (or the platform itself) may engage in fraudulent behavior, altering the bet outcomes, and delaying or withholding payments.
 3. Opaque Processes: Many online casinos do not offer transparency into how bets are managed or how results are calculated. Users are left with little control and no insight into the mechanics of the game.
 
 ## What we do
+
 We need to prove that the zero-trust online casino platform in the UK is achievable. We create a decentralized online casino platform where trust and transparency are embedded in the system itself. By utilizing blockchain technology and smart contracts, we provide a platform for both bankers (bet creators) and players (bet participants) to engage in trustless betting.
 
 ## Why Blockchain
+
 Can a traditional database technology meet our needs?
 - No, because we need a smart contract to prevent fraud and deception.
 Does more than one participant need to be able to update the data?
@@ -26,6 +29,7 @@ Do we need to control who can make changes to the blockchain software?
 - No, there's no need to make any change to the blockchain software. Any blockchain-supporting smart contracts can be used such as Ethereum.
 
 ## Use Case
+
 1. Creating a bet
    - A banker initiates a bet by defining the parameters (e.g., type of game, amount wagered).
     - The bet is published, and potential players can see the terms and choose whether to participate.
@@ -42,6 +46,7 @@ Do we need to control who can make changes to the blockchain software?
     - The winnings are distributed based on the contract’s predefined conditions, without requiring intervention from any central party.
 
 ## Activity Flow
+
 1. Banker’s Role:
     - Creates and deploys a bet via the platform's smart contract interface.
     - Can manually join another banker’s bet by contributing funds to increase the pool.
@@ -55,6 +60,7 @@ Do we need to control who can make changes to the blockchain software?
     - Manages the betting process: verifying terms, locking wagers, calculating outcomes, and distributing payouts.
 
 ## Project Roadmap
+
 Phase 1: **Initial Betting System**  
 	Launch the platform with a simple sports betting system, where bankers can create win/lose bets for individual sports events. Players can make bets.
 
@@ -81,7 +87,9 @@ In the folder `smart-contract`, there are several important files/folders you ne
 3. `/ignition`, which involves compile and build.
 
 To redeploy the smart contract, you can run the following commands in your terminal:
-
+```bash
+cd smart-contract
+```
 ```bash
 npx hardhat compile
 ```
