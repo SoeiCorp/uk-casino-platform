@@ -41,6 +41,7 @@ struct PostView {
 	uint256 totalStake;
 	uint256 myStake;
 	Bet totalBet;
+	Bet myBet;
 	bool isInitialized;
 	bool isFinished;
 	bool isAlreadyMadeABet;
@@ -71,6 +72,43 @@ contract CasinoPlatform is Ownable {
 		nMatch = 0;
     }
 
+	function getPostsIBetInWithPagination(uint256 nData, uint256 pageNumber) public view returns (PostView[] memory posts, bool success, bool haveMorePageAvailable) {
+		uint256[] storage postIds = PlayerBettingPostIds[msg.sender];
+
+		uint256 startIndex;
+		uint256 endIndex;
+
+		(startIndex, endIndex, success, haveMorePageAvailable) = _getPaginationStartEndIndex(postIds.length, nData, pageNumber);
+
+		if (!success) {
+			return (posts, success, haveMorePageAvailable);
+		}
+
+		uint256 nDataToReturn = startIndex - endIndex + 1;
+		posts = new PostView[](nDataToReturn);
+
+		for (uint256 i = startIndex; i >= endIndex; i--) {
+			uint256 j = startIndex - i;
+
+			posts[j].id = BettingPosts[postIds[i]].id;
+			posts[j].matchId = BettingPosts[postIds[i]].matchId;
+			posts[j].homeHandicapScore = BettingPosts[postIds[i]].homeHandicapScore;
+			posts[j].awayHandicapScore = BettingPosts[postIds[i]].awayHandicapScore;
+			posts[j].totalStake = BettingPosts[postIds[i]].totalStake;
+			posts[j].totalBet = BettingPosts[postIds[i]].totalBet;
+			posts[j].isInitialized = BettingPosts[postIds[i]].isInitialized;
+			posts[j].isFinished = Matches[BettingPosts[postIds[i]].matchId].isFinished;
+			posts[j].isAlreadyMadeABet = BettingPosts[postIds[i]].playerBet[msg.sender].isInitialized;
+			posts[j].myStake = BettingPosts[postIds[i]].bankerStake[msg.sender];
+			posts[j].myBet.homeBet = BettingPosts[postIds[i]].playerBet[msg.sender].homeBet;
+			posts[j].myBet.awayBet = BettingPosts[postIds[i]].playerBet[msg.sender].awayBet;
+		}
+
+		success = true;
+
+		return (posts, success, haveMorePageAvailable);
+	}
+
 	function getMyBettingPostsAsBankerWithPagination(uint256 nData, uint256 pageNumber) public view returns (PostView[] memory posts, bool success, bool haveMorePageAvailable) {
 		uint256[] storage postIds = BankerBettingPostIds[msg.sender];
 
@@ -99,6 +137,8 @@ contract CasinoPlatform is Ownable {
 			posts[j].isFinished = Matches[BettingPosts[postIds[i]].matchId].isFinished;
 			posts[j].isAlreadyMadeABet = BettingPosts[postIds[i]].playerBet[msg.sender].isInitialized;
 			posts[j].myStake = BettingPosts[postIds[i]].bankerStake[msg.sender];
+			posts[j].myBet.homeBet = BettingPosts[postIds[i]].playerBet[msg.sender].homeBet;
+			posts[j].myBet.awayBet = BettingPosts[postIds[i]].playerBet[msg.sender].awayBet;
 		}
 
 		success = true;
@@ -133,6 +173,9 @@ contract CasinoPlatform is Ownable {
 			posts[j].isInitialized = BettingPosts[postIds[i]].isInitialized;
 			posts[j].isFinished = Matches[BettingPosts[postIds[i]].matchId].isFinished;
 			posts[j].isAlreadyMadeABet = BettingPosts[postIds[i]].playerBet[msg.sender].isInitialized;
+			posts[j].myStake = BettingPosts[postIds[i]].bankerStake[msg.sender];
+			posts[j].myBet.homeBet = BettingPosts[postIds[i]].playerBet[msg.sender].homeBet;
+			posts[j].myBet.awayBet = BettingPosts[postIds[i]].playerBet[msg.sender].awayBet;
 		}
 
 		success = true;
