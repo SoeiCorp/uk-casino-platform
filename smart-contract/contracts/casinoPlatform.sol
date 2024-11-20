@@ -49,6 +49,8 @@ struct PostView {
 	bool isInitialized;
 	bool isFinished;
 	bool isAlreadyMadeABet;
+	string home;
+	string away;
 }
 
 struct MatchView {
@@ -409,6 +411,10 @@ contract CasinoPlatform is Ownable {
 
 			posts[j].playerRewardClaimed = BettingPosts[postIds[i]].playerBet[msg.sender].isClaimed;
 			posts[j].bankerRewardClaimed = BettingPosts[postIds[i]].bankerClaimedReward[msg.sender];
+
+			posts[j].home = Matches[BettingPosts[postIds[i]].matchId].home;
+			posts[j].away = Matches[BettingPosts[postIds[i]].matchId].away;
+
 
 			if (i == 0) {
 				break;
