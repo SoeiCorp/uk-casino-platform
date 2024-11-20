@@ -44,6 +44,17 @@ struct PostView {
 	bool isAlreadyMadeABet;
 }
 
+struct MatchView {
+	uint256 id;
+	string home;
+	string away;
+	uint32 homeScore;
+	uint32 awayScore;
+	bool isFinished;
+	bool isInitialized;
+	uint256 nPosts;
+}
+
 contract CasinoPlatform is Ownable {
 	uint256 public nBetting;
 	uint256 public nMatch;
@@ -91,7 +102,7 @@ contract CasinoPlatform is Ownable {
 		return (posts, success, haveMorePageAvailable);
 	}
 	
-	function getActiveMatchSortByLatest(uint256 nData, uint256 pageNumber) public view returns (Match[] memory activeMatches, bool success, bool haveMorePageAvailable) {
+	function getActiveMatchSortByLatest(uint256 nData, uint256 pageNumber) public view returns (MatchView[] memory activeMatches, bool success, bool haveMorePageAvailable) {
 		uint256 startIndex;
 		uint256 endIndex;
 
@@ -102,13 +113,20 @@ contract CasinoPlatform is Ownable {
 		}
 		
 		uint256 nDataToReturn = startIndex - endIndex + 1;
-		activeMatches = new Match[](nDataToReturn);
+		activeMatches = new MatchView[](nDataToReturn);
 
 
 		for (uint256 i = startIndex; i >= endIndex; i--) {
 			uint256 j = startIndex - i;
 
-			activeMatches[j] = Matches[i];
+			activeMatches[j].id = Matches[i].id;
+			activeMatches[j].home = Matches[i].home;
+			activeMatches[j].away = Matches[i].away;
+			activeMatches[j].homeScore = Matches[i].homeScore;
+			activeMatches[j].awayScore = Matches[i].awayScore;
+			activeMatches[j].isFinished = Matches[i].isFinished;
+			activeMatches[j].isInitialized = Matches[i].isInitialized;
+			activeMatches[j].nPosts = Matches[i].bettingPostIds.length;
 		}
 
 		success = true;
