@@ -185,6 +185,8 @@ contract CasinoPlatform is Ownable {
 
 		balanceToSend = theBankerReward;
 
+		thePost.bankerClaimedReward[msg.sender] = true;
+
 		_transfer(msg.sender, balanceToSend);
 
 		return true;
