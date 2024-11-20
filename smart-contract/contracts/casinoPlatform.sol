@@ -90,26 +90,25 @@ contract CasinoPlatform is Ownable {
 		return true;
 	}
 
-    function createBettingPost(uint256 matchId, uint32 homeHandicapScore, uint32 awayHandicapScore) public payable returns (uint256) {
+    function createBettingPost(uint256 matchId, uint32 homeHandicapScore, uint32 awayHandicapScore) public payable returns (uint256 newPostId) {
 		require(Matches[matchId].isInitialized, "matchId not existed");
 		require(!Matches[matchId].isFinished, "the match is alreay finished");
 
-		Post storage newPost = BettingPosts[nBetting];
+		BettingPosts[nBetting].id = nBetting;
 
-		newPost.id = nBetting;
+		BettingPosts[nBetting].matchId = matchId;
+		BettingPosts[nBetting].homeHandicapScore = homeHandicapScore;
+		BettingPosts[nBetting].awayHandicapScore = awayHandicapScore;
+		BettingPosts[nBetting].bankerStake[msg.sender] = msg.value;
+		BettingPosts[nBetting].totalStake = msg.value;
+		BettingPosts[nBetting].isInitialized = true;
+		BettingPosts[nBetting].totalBet.isInitialized = true;
+
+		Matches[matchId].bettingPostIds.push(BettingPosts[nBetting].id);
+
 		nBetting += 1;
 
-		newPost.matchId = matchId;
-		newPost.homeHandicapScore = homeHandicapScore;
-		newPost.awayHandicapScore = awayHandicapScore;
-		newPost.bankerStake[msg.sender] = msg.value;
-		newPost.totalStake = msg.value;
-		newPost.isInitialized = true;
-		newPost.totalBet.isInitialized = true;
-
-		Matches[matchId].bettingPostIds.push(newPost.id);
-
-		return newPost.id;
+		return BettingPosts[nBetting].id;
 	}
 
 	function contributeToBettingPost(uint256 postId) public payable returns (bool success) {
@@ -131,7 +130,7 @@ contract CasinoPlatform is Ownable {
 		Matches[nMatch].isInitialized = true;
 
 		nMatch += 1;
-		
+
 		return Matches[nMatch].id;
 	}
 
