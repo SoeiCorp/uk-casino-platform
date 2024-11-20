@@ -44,6 +44,8 @@ struct PostView {
 	uint256 myStake;
 	Bet totalBet;
 	Bet myBet;
+	bool playerRewardClaimed;
+	bool bankerRewardClaimed;
 	bool isInitialized;
 	bool isFinished;
 	bool isAlreadyMadeABet;
@@ -404,6 +406,9 @@ contract CasinoPlatform is Ownable {
 			posts[j].myStake = BettingPosts[postIds[i]].bankerStake[msg.sender];
 			posts[j].myBet.homeBet = BettingPosts[postIds[i]].playerBet[msg.sender].homeBet;
 			posts[j].myBet.awayBet = BettingPosts[postIds[i]].playerBet[msg.sender].awayBet;
+
+			posts[j].playerRewardClaimed = BettingPosts[postIds[i]].playerBet[msg.sender].isClaimed;
+			posts[j].bankerRewardClaimed = BettingPosts[postIds[i]].bankerClaimedReward[msg.sender];
 
 			if (i == 0) {
 				break;
