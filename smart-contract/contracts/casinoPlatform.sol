@@ -44,11 +44,11 @@ struct PostView {
 	uint256 myStake;
 	Bet totalBet;
 	Bet myBet;
-	bool playerRewardClaimed;
-	bool bankerRewardClaimed;
 	bool isInitialized;
 	bool isFinished;
 	bool isAlreadyMadeABet;
+	bool playerRewardClaimed;
+	bool bankerRewardClaimed;
 	string home;
 	string away;
 }
