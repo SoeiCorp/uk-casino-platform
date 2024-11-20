@@ -6,6 +6,9 @@ A1: Because struct with map cant be store in array
 Q2: Why the casino is ownable and only owner can create and finish matches?
 A2: Because we are currently not connecting to chainlink. We're planned to use chainlink (highly secure and trusted link between off-chain and on-chain data) for matches information.
 
+Q3: Why use View struct for getting data?
+A3: Because it is to avoid sending dynamic size data such as array and map to users to breaking gas limit.
+
 
 # Sample Hardhat Project
 
