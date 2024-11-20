@@ -28,6 +28,7 @@ struct Post {
 	uint32 homeHandicapScore;
 	uint32 awayHandicapScore;
 	mapping(address => uint256) bankerStake;
+	mapping(address => bool) bankerClaimedReward;
 	uint256 totalStake;
 	mapping(address => Bet) playerBet;
 	Bet totalBet;
@@ -138,6 +139,53 @@ contract CasinoPlatform is Ownable {
 		Matches[matchId].homeScore = homeScore;
 		Matches[matchId].awayScore = awayScore;
 		Matches[matchId].isFinished = true;
+
+		return true;
+	}
+
+	function bankerClaimReward(uint256 postId) public returns (bool) {
+		Post storage thePost = BettingPosts[postId];
+		Match storage theMatch = Matches[thePost.matchId];
+		
+		require(thePost.isInitialized, "betting post not found");
+		require(!thePost.bankerClaimedReward[msg.sender], "reward already claimed");
+
+		uint256 balanceToSend;
+
+		// allow banker to pull out money when the chainlink is not updating
+		if (theMatch.timeLimit <= block.timestamp) {
+			BettingPosts[postId].bankerClaimedReward[msg.sender] = true;
+
+			balanceToSend = BettingPosts[postId].bankerStake[msg.sender];
+
+			_transfer(msg.sender, balanceToSend);
+
+			return true;
+		}
+
+		require(theMatch.isFinished, "match is not finished");
+
+		// banker_reward = total_banker_reward * banker_stake / total_stake
+		// total_banker_reward = total_banker_stake + total_bet(both home and away combined) - total_player_win
+
+		uint256 totalPlayerWin;
+
+		uint32 homeScoreWithHandicap = theMatch.homeScore + thePost.homeHandicapScore;
+		uint32 awayScoreWithHandicap = theMatch.awayScore + thePost.awayHandicapScore;
+
+		if (homeScoreWithHandicap > awayScoreWithHandicap) {
+			totalPlayerWin = thePost.totalBet.homeBet * 2;
+		} else if (homeScoreWithHandicap < awayScoreWithHandicap) {
+			totalPlayerWin = thePost.totalBet.awayBet * 2;
+		}
+
+		uint256 totalBankerReward = thePost.totalStake + thePost.totalBet.homeBet + thePost.totalBet.awayBet - totalPlayerWin;
+
+		uint256 theBankerReward = totalBankerReward * BettingPosts[postId].bankerStake[msg.sender] / BettingPosts[postId].totalStake;
+
+		balanceToSend = theBankerReward;
+
+		_transfer(msg.sender, balanceToSend);
 
 		return true;
 	}
