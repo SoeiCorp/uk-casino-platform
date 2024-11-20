@@ -24,7 +24,6 @@ struct Bet {
 struct Post {
 	uint256 id;
 	uint256 matchId;
-	address[] bankers;
 	uint32 homeHandicapScore;
 	uint32 awayHandicapScore;
 	mapping(address => uint256) bankerStake;
@@ -101,7 +100,6 @@ contract CasinoPlatform is Ownable {
 		nBetting += 1;
 
 		newPost.matchId = matchId;
-		newPost.bankers.push(msg.sender);
 		newPost.homeHandicapScore = homeHandicapScore;
 		newPost.awayHandicapScore = awayHandicapScore;
 		newPost.bankerStake[msg.sender] = msg.value;
@@ -127,13 +125,13 @@ contract CasinoPlatform is Ownable {
 
 	function createMatch(string calldata home, string calldata away) public onlyOwner returns (uint256) {
 		Matches[nMatch].id = nMatch;
-		nMatch += 1;
-
 		Matches[nMatch].home = home;
 		Matches[nMatch].away = away;
 		Matches[nMatch].isFinished = false;
 		Matches[nMatch].isInitialized = true;
 
+		nMatch += 1;
+		
 		return Matches[nMatch].id;
 	}
 
