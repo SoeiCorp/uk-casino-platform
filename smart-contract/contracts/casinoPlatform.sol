@@ -49,6 +49,8 @@ contract CasinoPlatform is Ownable {
 
     mapping(uint256 => Match) Matches;
     mapping(uint256 => Post) BettingPosts;
+	mapping(address => uint256[]) PlayerBettingPostIds;
+	mapping(address => uint256[]) BankerBettingPostIds;
 
     constructor() {
 		nBetting = 0;
@@ -173,6 +175,8 @@ contract CasinoPlatform is Ownable {
 
 		Matches[matchId].bettingPostIds.push(BettingPosts[nBetting].id);
 
+		BankerBettingPostIds[msg.sender].push(BettingPosts[nBetting].id);
+
 		nBetting += 1;
 
 		return BettingPosts[nBetting].id;
@@ -183,6 +187,8 @@ contract CasinoPlatform is Ownable {
 
 		BettingPosts[postId].bankerStake[msg.sender] += msg.value;
 		BettingPosts[postId].totalStake += msg.value;
+
+		BankerBettingPostIds[msg.sender].push(BettingPosts[nBetting].id);
 
 		success = true;
 
@@ -221,6 +227,8 @@ contract CasinoPlatform is Ownable {
 
 		BettingPosts[postId].playerBet[msg.sender].isClaimed = false;
 		BettingPosts[postId].playerBet[msg.sender].isInitialized = true;
+
+		PlayerBettingPostIds[msg.sender].push(postId);
 
 		return true;
 	}
