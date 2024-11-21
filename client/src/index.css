@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 240 247;
+    --foreground: 29 29 31;
+    
+    --card: 255 255 255;
+    --card-foreground: 29 29 31;
+    
+    --border: 134 134 139;
+    --input: 134 134 139;
+    
+    --ring: 6 193 103;
+    
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20 shadow-lg;
+  }
+  
+  .nav-link {
+    @apply relative px-4 py-2 text-muted hover:text-secondary transition-colors duration-200
+           after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5
+           after:bg-primary after:scale-x-0 after:origin-left after:transition-transform
+           hover:after:scale-x-100;
+  }
+  
+  .btn-primary {
+    @apply px-6 py-3 bg-primary text-white rounded-lg font-medium
+           hover:bg-primary/90 active:bg-primary/80 transition-colors duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-3 bg-secondary text-white rounded-lg font-medium
+           hover:bg-secondary/90 active:bg-secondary/80 transition-colors duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-input bg-background
+           focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent
+           transition-all duration-200;
+  }
+}
+
+.animate-enter {
+  animation: fade-in 0.3s ease-out;
+}
+
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
