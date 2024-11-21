@@ -119,6 +119,9 @@ In the folder `/client`, there are several folders/files that are important:
 To run our frontend, there are two methods:
 ### Method 1: Using Docker
 ```bash
+cd client
+```
+```bash
 docker-compose up --build
 ```
 
